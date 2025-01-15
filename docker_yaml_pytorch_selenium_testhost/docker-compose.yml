@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  llm_test_env:
+    image: my-llm-container
+    container_name: llm_test_env
+    tty: true           # 允许交互式终端
+    stdin_open: true    # 允许标准输入保持打开
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    volumes:
+      - C:\Huiyu_Wang\Work\code\LLM:/workspace
+      - ./entrypoint.sh:/workspace/entrypoint.sh  # 挂载到 /workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.cache/conda:/root/.conda
+      - ~/.cache/pip:/root/.cache/pip
+      - ~/.cache/webdriver:/root/.cache/webdriver
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    shm_size: '16gb'
+    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - DISPLAY=${DISPLAY}
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+    working_dir: /workspace
+
+    entrypoint: ["/bin/bash", "/workspace/entrypoint.sh"]  # 改为 /workspace/entrypoint.sh
