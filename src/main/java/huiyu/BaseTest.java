@@ -16,18 +16,34 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class BaseTest {
     protected WebDriver driver;
     protected static final List<Double> accessibilityScores = new ArrayList<>();
+    private static Process xvfbProcess; // 用于管理 Xvfb 进程
 
     @BeforeEach
     public void setUp() {
-        // 初始化 WebDriver
-        // System.setProperty("webdriver.chrome.driver", Config.DRIVER_PATH);
-        WebDriverManager.chromedriver().setup();
-        
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-        // options.addArguments("--remote-debugging-port=" + Config.LIGHTHOUSE_PORT); // 确保以调试端口打开.注释掉这一行就可以正常开启新的web page
-        driver = new ChromeDriver(options);
-        System.out.println("ChromeDriver initialized and Chrome launched."); // 添加调试信息
+        try {
+            // 启动 Xvfb
+            if (xvfbProcess == null) {
+                System.out.println("Starting Xvfb...");
+                xvfbProcess = Runtime.getRuntime().exec("Xvfb :99 -screen 0 1920x1080x24");
+                Thread.sleep(2000); // 等待 Xvfb 启动
+            }
+
+            System.setProperty("DISPLAY", ":99");
+
+            // 初始化 ChromeDriver
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--no-sandbox"); // 适用于 Docker
+            options.addArguments("--disable-dev-shm-usage"); // 解决某些环境下共享内存不足的问题
+            options.addArguments("--headless"); // 以无界面模式运行
+
+            driver = new ChromeDriver(options);
+            System.out.println("ChromeDriver initialized and Chrome launched.");
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to start Xvfb or ChromeDriver", e);
+        }
     }
 
     @AfterEach
@@ -40,6 +56,15 @@ public class BaseTest {
         }
     }
 
+    @AfterAll
+    public static void cleanup() {
+        if (xvfbProcess != null) {
+            System.out.println("Stopping Xvfb...");
+            xvfbProcess.destroy();
+            xvfbProcess = null;
+        }
+    }
+    
     @AfterAll
     public static void runLighthouse() {
         try {
@@ -55,6 +80,7 @@ public class BaseTest {
             e.printStackTrace();
         }
     }
-    
-}
 
+
+
+}

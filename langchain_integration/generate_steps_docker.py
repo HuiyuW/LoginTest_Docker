@@ -9,7 +9,7 @@ import gc
 def generate_step_definitions(task_gherkin):
     model_paths = [
         # "C:/Huiyu_Wang/Work/code/LLM/Llama-3.1-8B-Instruct",
-        "C:/Huiyu_Wang/Work/code/LLM/starcoder2-3b"
+        "/workspace/starcoder2-3b"
     ]
 
 
@@ -272,7 +272,8 @@ public class LoginTest_test extends BaseTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollTop = arguments[0].scrollHeight;", modal);
     
         // 等待 "I Agree" 按钮可点击
-        WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("welcome-agree-agb")));
+        WebElement acceptButton = driver.findElement(By.cssSelector("groupui-button#welcome-agree-agb"));
+
     
         // 强制点击 "I Agree" 按钮
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", acceptButton);

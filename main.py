@@ -13,7 +13,7 @@ from langchain_integration.run_tests import run_java_tests
 # feature_path = generate_gherkin(task_description)
 # print(f"Gherkin scripts saved at {feature_path}")
 
-feature_path = "C:/Huiyu_Wang/Work/code/example_cucumber_langchain/demo/src/test/resources/features/LoginTest.feature"
+feature_path = "/workspace/LoginTest/src/test/resources/features/LoginTest.feature"
 with open(feature_path, "r") as f:
     feature_text = f.read()
 steps_path = generate_step_definitions(feature_text)

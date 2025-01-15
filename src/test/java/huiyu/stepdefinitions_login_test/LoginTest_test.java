@@ -81,7 +81,8 @@ public class LoginTest_test extends BaseTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollTop = arguments[0].scrollHeight;", modal);
     
         // 等待 "I Agree" 按钮可点击
-        WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("welcome-agree-agb")));
+        WebElement acceptButton = driver.findElement(By.cssSelector("groupui-button#welcome-agree-agb"));
+
     
         // 强制点击 "I Agree" 按钮
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", acceptButton);
