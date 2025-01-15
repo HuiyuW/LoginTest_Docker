@@ -1,12 +1,33 @@
 
     Generate Java step definitions for this Gherkin feature:
 
-    
-    Feature: Web Page Title and Accessibility Test
-      Scenario: Validate webpage title and accessibility score
-        Given I navigate to the test URL
-        Then I should see the correct page title
-    
+    Feature: Login to the TaaS Serviceportal
+
+  Scenario: Successful login to the TaaS Serviceportal
+    Given I open the login page
+    When I enter username "vw2xn87" and password "xOqMiHJegL3JvnOCK9rb0vOG1pZ7Oc1C7fAfRR0WEuk4keuwEc0yAUF3QSahP8G3IBKw2FO2zvcr7njD"
+    And I click the login button
+    Then I should see the terms and conditions popup
+    When I accept the terms and conditions
+    Then I should be logged in and see my profile avatar and ID
+
+  Scenario: Login with incorrect password
+    Given I open the login page
+    When I enter username "vw2xn87" and password "1234"
+    And I click the login button
+    When I accept the terms and conditions
+    Then I should be on the login page
+
+  Scenario: Logout after successful login
+    Given I open the login page
+    When I enter username "vw2xn87" and password "xOqMiHJegL3JvnOCK9rb0vOG1pZ7Oc1C7fAfRR0WEuk4keuwEc0yAUF3QSahP8G3IBKw2FO2zvcr7njD"
+    And I click the login button
+    Then I should see the terms and conditions popup
+    When I accept the terms and conditions
+    Then I should be logged in and see my profile avatar and ID
+    When I click the profile avatar
+    And I click the logout button
+    Then I should be on the login page
     Provide the Java `step definitions` class in the following format:
     - Each Gherkin step should have a corresponding Java method with annotations.
     - Implement Selenium code where necessary, and use assertions to validate expected outcomes.
@@ -43,100 +64,60 @@
     ### Start Output
     Output begins below:
     
-    e_data['data'] = data
-            response_data['status'] = 1
-            response_data['message'] = 'Success'
-            return JsonResponse(response_data)
-        else:
-            response_data['message'] = 'Error'
-            return JsonResponse(response_data)
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views import View
+    yutakatsu2468/mugen-3.0/src/js/game/MugenGame.js
+/**
+ * This class is a wrapper for the game state.
+ *
+ * @class
+ * @extends Phaser.Game
+ * @memberof mugen
+ *
+ * @param {string} gameID - The ID of the game
+ * @param {mugen.MugenConfig} config - The configuration for the game
+ */
+mugen.MugenGame = class extends Phaser.Game {
 
-from.models import *
-from.utils import *
+    constructor(gameID, config) {
 
-import json
+        let gameWidth = config.gameWidth;
+        let gameHeight = config.gameHeight;
+        let parent = config.parent;
 
-# Create your views here.
+        config.gameWidth = gameWidth * mugen.screenScale;
+        config.gameHeight = gameHeight * mugen.screenScale;
 
-class GetUsers(View):
-    def get(self, request):
-        response_data = {}
-        try:
-            users = User.objects.all().order_by('id')
-            data = UserSerializer(users, many=True)
-            response_data['data'] = data
-            response_data['status'] = 1
-            response_data['message'] = 'Success'
-            return JsonResponse(response_data)
-        except:
-            response_data['message'] = 'Error'
-            return JsonResponse(response_data)
+        config.parent = parent;
 
-class GetUser(View):
-    def get(self, request, pk):
-        response_data = {}
-        try:
-            user = User.objects.get(id=pk)
-            data = UserSerializer(user)
-            response_data['data'] = data
-            response_data['status'] = 1
-            response_data['message'] = 'Success'
-            return JsonResponse(response_data)
-        except:
-            response_data['message'] = 'Error'
-            return JsonResponse(response_data)
+        // Set the stage scale mode
+        config.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+        config.scale.setScreenSize();
 
-class UpdateUser(View):
-    def put(self, request, pk):
-        response_data = {}
-        try:
-            user = User.objects.get(id=pk)
-            name = request.POST.get('name')
-            address = request.POST.get('address')
-            user.name = name
-            user.address = address
-            user.save()
-            data = UserSerializer(user)
-            response_data['data'] = data
-            response_data['status'] = 1
-            response_data['message'] = 'Success'
-            return JsonResponse(response_data)
-        except:
-            response_data['message'] = 'Error'
-            return JsonResponse(response_data)
+        super(config);
 
-class DeleteUser(View):
-    def delete(self, request, pk):
-        response_data = {}
-        try:
-            user = User.objects.get(id=pk)
-            user.delete()
-            data = UserSerializer(user)
-            response_data['data'] = data
-            response_data['status'] = 1
-            response_data['message'] = 'Success'
-            return JsonResponse(response_data)
-        except:
-            response_data['message'] = 'Error'
-            return JsonResponse(response_data)
+        this.gameID = gameID;
 
-class AddUser(View):
-    def post(self, request):
-        response_data = {}
-        if request.method == 'POST':
-            name = request.POST.get('name')
-            address = request.POST.get('address')
-            user = User.objects.create(
-                name=name,
-                address=address
-            )
-            data = UserSerializer(user)
-            responsdress', models.TextField()),
-            ],
-        ),
-    ]
-# Generated by Django 
+        // The config for the game
+        this.config = config;
+
+        // The game state
+        this.gameState = new mugen.GameState(this);
+        this.state.add('GameState', this.gameState);
+        this.state.start('GameState');
+    }
+}
+/src/js/game/states/GameState.js
+/**
+ * The game state class.
+ *
+ * @class
+ * @memberof mugen
+ *
+ * @param {mugen.MugenGame} game - The game
+ */
+mugen.GameState = class extends Phaser.State {
+
+    constructor(game) {
+        super();
+
+        this.game = game;
+        this.gameID = game.gameID

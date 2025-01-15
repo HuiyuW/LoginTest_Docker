@@ -7,7 +7,7 @@ def run_java_tests():
     os.chdir(project_root)
     
 
-    process = subprocess.Popen(["mvn", "test"], shell=True)
+    process = subprocess.Popen(["mvn", "test", "-Dtest=CucumberTestRunner_login_test"], shell=True)
     stdout, stderr = process.communicate()
     
     if process.returncode == 0:
@@ -16,4 +16,8 @@ def run_java_tests():
     else:
         print("test fail")
         print(stderr)
+
+
+
+
 
